@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+      /* Set the size of the div element that contains the map */
+      #map {
+        height: 400px;  /* The height is 400 pixels */
+        width: 100%;  /* The width is the width of the web page */
+       }
+    </style>
+</head>
+
+<body>
+  <button id="btn" ><label class="btn btn-secondary">Get My Location</label></button>
+  <br>
+  <div id="sp">
+
+  </div>
+  <hr>
+  <div id="temp">
+
+  </div>
+  <div id="map"></div>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script>
+    var spHandle = document.getElementById("sp");
+    var btnHandle = document.getElementById('btn')
+    var tempHandle = document.getElementById('temp')
+    btnHandle.addEventListener('click', function () {
+      var myLat, myLong, temp;
+      navigator.geolocation.getCurrentPosition((loc) => {
+        myLat = loc.coords.latitude;
+        myLong = loc.coords.longitude;
+        spHandle.innerHTML = `${myLat}\n\n${myLong}`
+        var obj = {};
+        obj['lat'] = myLat;
+        obj['lng'] = myLong;
+        initMap(obj);
+        axios.get(`https://api.darksky.net/forecast/f5cbd780b1336bb1292f40ae4064590f/${myLat},${myLong}`)
+          .then((response) => {
+            var zone = response.data;
+            tempHandle.innerHTML = `temp ${zone.currently.temperature}`
+
+            // Initialize and add the map
+            
+
+          })
+      })
+    }, false)
+    // Initialize and add the map
+    function initMap(location) {
+      var map = new google.maps.Map(
+          document.getElementById('map'),{zoom: 8, center: location});
+      // The marker, positioned at location
+      var marker = new google.maps.Marker({position: location, map: map});
+    }
+  </script>      
+  
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&callback=initMap">
+  </script>
+</body>
+</html>
